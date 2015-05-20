@@ -15,22 +15,16 @@
  */
 package net.codestory.http.templating.helpers;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonMap;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
+import com.github.jknack.handlebars.*;
+import net.codestory.http.compilers.*;
+import net.codestory.http.io.*;
+import net.codestory.http.misc.*;
+import org.junit.*;
 
-import net.codestory.http.compilers.CompilerFacade;
-import net.codestory.http.io.Resources;
-import net.codestory.http.misc.Env;
-
-import org.junit.Test;
-
-import com.github.jknack.handlebars.Context;
-import com.github.jknack.handlebars.Handlebars;
-import com.github.jknack.handlebars.Options;
-import com.github.jknack.handlebars.TagType;
-import com.github.jknack.handlebars.Template;
+import static java.util.Arrays.*;
+import static java.util.Collections.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 public class AssetsHelperSourceTest {
   static Env env = Env.prod();
@@ -141,6 +135,13 @@ public class AssetsHelperSourceTest {
       "<link rel=\"stylesheet\" href=\"assets/style.css?80fa881ffa6af083a80845467622c6185949a47b\">\n" +
         "<link rel=\"stylesheet\" href=\"assets/anotherstyle.css?dcec144afa669dc921a4c9069d4c7d96fe28a833\">"
     );
+  }
+
+  @Test
+  public void multiple_css_with_concatenate() {
+    CharSequence css = assetsHelper.css(asList("assets/style", "assets/anotherstyle"), options("concatenate", "assets/app"));
+
+    assertThat(css.toString()).isEqualTo("<link rel=\"stylesheet\" href=\"assets/app.css?1325f8a13b94f99cffec793385e53840c56ea0d3\">");
   }
 
   static Options options(String key, String value) {
